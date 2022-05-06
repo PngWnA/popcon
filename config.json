@@ -1,0 +1,9 @@
+{
+    "statistics": {
+        "by": "whole",
+        "field": "inst"
+    },
+    "parser": {
+        "top": 1000
+    }
+}
