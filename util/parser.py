@@ -11,7 +11,7 @@ pattern = re.compile( \
     r"(?P<nofiles>\d+)\s+" + \
     r"\((?P<maintainer>.*)\)")
 
-def parse(txt, config, cache=False):
+def parse_popcon(txt, config, cache=False):
     if cache:
         txt = open("cache/popcon.txt", "r").read()
 

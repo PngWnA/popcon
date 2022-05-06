@@ -1,6 +1,7 @@
 import requests
+import os
 
-def download(config, cache=False):
+def download_popcon(config, cache=False):
     base = "https://popcon.debian.org"
     by = config["by"]
     field = "by_"+config["field"]
@@ -14,3 +15,11 @@ def download(config, cache=False):
     return r.text
 
 
+def get_source(package, path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+    
+    pwd = os.getcwd()
+    os.chdir(path)
+    os.system(f"sudo apt source -y {package}")
+    os.chdir(pwd)
