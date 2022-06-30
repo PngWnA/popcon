@@ -1,6 +1,6 @@
 import re
 
-# (?P<maintainer>\(.+\))
+# Format of popcon raw text
 pattern = re.compile( \
     r"^(?P<rank>\d+)\s+" + \
     r"(?P<name>\S+)\s+" + \
@@ -11,6 +11,7 @@ pattern = re.compile( \
     r"(?P<nofiles>\d+)\s+" + \
     r"\((?P<maintainer>.*)\)")
 
+# Convert popcon raw text to list of dictionary
 def parse_popcon(txt, config, cache=False):
     if cache:
         txt = open("cache/popcon.txt", "r").read()
