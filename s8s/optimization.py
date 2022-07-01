@@ -1,13 +1,17 @@
 import os
+import re
 
-from tomlkit import key
+pattern = re.compile(r"""-O\S+""")
+
 
 # equivalent to grep
 def ogrep(data, keyword):
     for line in data:
         if line.startswith(keyword):
-            print(line)
-    return
+            res = pattern.findall(line)
+            if res is not None:
+                return res[0]
+    return None
 
 
 # Simple heuristic to guess the opt level
@@ -19,16 +23,18 @@ def guess_opt_level(path):
     if "Makefile" in path[2]:
         print("[+] Makefile in root directory")
         raw = open(prefix+"/Makefile", "r").readlines()
-        if ogrep(raw, "CFLAGS"):
-            print("wow")
-    if "config.status" in path[2]:
+        if flag := ogrep(raw, "CFLAGS"):
+            res["Makefile"] = flag
+            print(res)
+    elif "config.status" in path[2]:
         print("[+] config.status in root directory")
-    if "configure" in path[2]:
+    elif "configure" in path[2]:
         print("[+] configure in root directory")
-    if "Makefile.am" in path[2]:
+    elif "Makefile.am" in path[2]:
         print("[+] Makefile.am in root directory")
-    if "configure.ac" in path[2]:
+    elif "configure.ac" in path[2]:
         print("[+] configure.ac in root directory")
+    
     return
 
 
