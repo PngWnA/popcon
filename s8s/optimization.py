@@ -9,7 +9,7 @@ def ogrep(data, keyword):
     for line in data:
         if line.startswith(keyword):
             res = pattern.findall(line)
-            if res is not []:
+            if res != []:
                 return res[0]
     return None
 
