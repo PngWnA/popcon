@@ -51,6 +51,22 @@ def guess_opt_level(path):
         elif flag := ogrep(raw, "CXXFLAGS"):
             res["configure"] = flag
             return res
+        else:
+            res["configure"] = "-O2" # default
+            return res
+
+    elif "Configure" in path[2]:
+        print("[+] configure in root directory")
+        raw = open(prefix+"/Configure", "r").readlines()
+        if flag := ogrep(raw, "CFLAGS"):
+            res["configure"] = flag
+            return res
+        elif flag := ogrep(raw, "CXXFLAGS"):
+            res["configure"] = flag
+            return res
+        else:
+            res["configure"] = "-O2" # default
+            return res
     
     elif "Makefile.am" in path[2]:
         print("[+] Makefile.am in root directory")
@@ -61,6 +77,7 @@ def guess_opt_level(path):
         elif flag := ogrep(raw, "CXXFLAGS"):
             res["Makefile.am"] = flag
             return res
+        
     
     elif "configure.ac" in path[2]:
         print("[+] configure.ac in root directory")
@@ -70,6 +87,9 @@ def guess_opt_level(path):
             return res
         elif flag := ogrep(raw, "AC_PROG_CXX"):
             res["configure.ac"] = flag
+            return res
+        else:
+            res["configure"] = "-O2" # default
             return res
     
     if res is None:
