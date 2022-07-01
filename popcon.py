@@ -5,24 +5,20 @@ from util.internet import download_popcon, get_source
 from util.parser import parse_popcon
 from s8s.optimization import check_opt_level
 
-#config = load_config()
-#popcon = download_popcon(config["statistics"])
-#lst = parse_popcon(popcon, config["parser"])
-
-
-
-os.chdir("./tmp")
-check_opt_level()
-exit()
+config = load_config()
+popcon = download_popcon(config["statistics"])
+lst = parse_popcon(popcon, config["parser"])
 
 target = "./tmp"
 total = len(lst)
+res = open("./result.txt", "w")
+
 for package in lst:
     print(f"{package['rank']}/{total} : {package['name']}")
     os.mkdir(target)
     os.chdir(target)
-    # get_source(package["name"])
-    check_opt_level()
-    # Do something
+    get_source(package["name"])
+    res.write(check_opt_level())
+    res.write("\n")
     os.chdir("../")
     os.rmdir(target)

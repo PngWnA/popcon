@@ -25,17 +25,55 @@ def guess_opt_level(path):
         raw = open(prefix+"/Makefile", "r").readlines()
         if flag := ogrep(raw, "CFLAGS"):
             res["Makefile"] = flag
-            print(res)
+            return res
+        elif flag := ogrep(raw, "CXXFLAGS"):
+            res["Makefile"] = flag
+            return res
+
     elif "config.status" in path[2]:
         print("[+] config.status in root directory")
+        raw = open(prefix+"/config.status", "r").readlines()
+        if flag := ogrep(raw, "S[\"CFLAGS\"]"):
+            res["config.status"] = flag
+            return res
+        elif flag := ogrep(raw, "S[\"CXXFLAGS\"]"):
+            res["config.status"] = flag
+            return res
+
     elif "configure" in path[2]:
         print("[+] configure in root directory")
+        raw = open(prefix+"/configure", "r").readlines()
+        if flag := ogrep(raw, "CFLAGS"):
+            res["configure"] = flag
+            return res
+        elif flag := ogrep(raw, "CXXFLAGS"):
+            res["configure"] = flag
+            return res
+    
     elif "Makefile.am" in path[2]:
         print("[+] Makefile.am in root directory")
+        raw = open(prefix+"/Makefile.am", "r").readlines()
+        if flag := ogrep(raw, "CFLAGS"):
+            res["Makefile.am"] = flag
+            return res
+        elif flag := ogrep(raw, "CXXFLAGS"):
+            res["Makefile.am"] = flag
+            return res
+    
     elif "configure.ac" in path[2]:
         print("[+] configure.ac in root directory")
+        raw = open(prefix+"/configure.ac", "r").readlines()
+        if flag := ogrep(raw, "AC_PROG_CC"):
+            res["configure.ac"] = flag
+            return res
+        elif flag := ogrep(raw, "AC_PROG_CXX"):
+            res["configure.ac"] = flag
+            return res
     
-    return
+    if res is None:
+        res["default":"-O0"]
+
+    return res
 
 
 
@@ -51,5 +89,5 @@ def check_opt_level():
     '''
     
     res = guess_opt_level(root)
-    return
+    return res
 
