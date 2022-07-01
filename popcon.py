@@ -22,4 +22,4 @@ for package in lst:
     res.write(str(check_opt_level()))
     res.write("\n")
     os.chdir("../")
-    os.rmdir(target)
+    os.system(f"sudo rm -rf {target}")

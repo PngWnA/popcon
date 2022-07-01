@@ -19,6 +19,8 @@ def guess_opt_level(path):
     prefix = path[0]
     res = {}
 
+    print(path)
+
 
     if "Makefile" in path[2]:
         print("[+] Makefile in root directory")
@@ -71,7 +73,7 @@ def guess_opt_level(path):
             return res
     
     if res is None:
-        res["default":"-O0"]
+        res["default"] = "-O0"
 
     return res
 
@@ -80,14 +82,12 @@ def guess_opt_level(path):
 # Return optimization level of main target package
 def check_opt_level():
     lst = list(os.walk("./"))
-    
     root = lst[1]
 
     ''' 
     Check from
     * Makefile -> config.status -> Configure -> Makefile.am -> Configure.ac
     '''
-    
     res = guess_opt_level(root)
     return res
 
