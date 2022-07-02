@@ -25,5 +25,5 @@ def parse_popcon(txt, config, cache=False):
             print(line)
             match = pattern.match(line)
             rows.append(match.groupdict())
-            if (line.startswith(str(config["top"]))) or (line.startswith("-"):
+            if (line.startswith(str(config["top"]))) or (line.startswith("-")):
                 return rows
