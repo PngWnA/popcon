@@ -127,6 +127,10 @@ def guess_opt_level(path):
 def check_opt_level():
     lst = list(os.walk("./"))
     print("[ ] Checking root directory...")
+    if len(lst) < 2:
+        res = {}
+        res["Error"] = "X"
+        return res
     root = lst[1]
 
     ''' 
@@ -143,4 +147,5 @@ def check_opt_level():
                 return res
     else:
         return res
+
 

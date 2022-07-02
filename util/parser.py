@@ -22,8 +22,9 @@ def parse_popcon(txt, config, cache=False):
         if line.startswith("#"):
             continue
         else:
-            print(line)
+            if line.startswith("-"):
+                return rows
             match = pattern.match(line)
             rows.append(match.groupdict())
-            if (line.startswith(str(config["top"]))) or (line.startswith("-")):
+            if (line.startswith(str(config["top"]))):
                 return rows
