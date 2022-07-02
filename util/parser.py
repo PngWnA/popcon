@@ -18,12 +18,12 @@ def parse_popcon(txt, config, cache=False):
 
     lines = txt.split("\n")
     rows = []
-
     for line in lines:
         if line.startswith("#"):
             continue
         else:
+            print(line)
             match = pattern.match(line)
             rows.append(match.groupdict())
-            if line.startswith(str(config["top"])):
+            if (line.startswith(str(config["top"]))) or (line.startswith("-"):
                 return rows
