@@ -7,10 +7,12 @@ pattern = re.compile(r"""-O\S+""")
 # equivalent to grep
 def ogrep(data, keyword):
     for line in data:
-        if line.startswith(keyword):
+        if (not line.strip().startswith("#")) and (keyword in line):
             res = pattern.findall(line)
             if res != []:
-                return res[0]
+                res = res[0].replace("\"", "")
+                print(res)
+                return res
     return None
 
 
@@ -19,11 +21,8 @@ def guess_opt_level(path):
     prefix = path[0]
     res = {}
 
-    print(path)
-
-
     if "Makefile" in path[2]:
-        print("[+] Makefile in root directory")
+        print("[+] Makefile: ", end="")
         raw = open(prefix+"/Makefile", "r").readlines()
         if flag := ogrep(raw, "CFLAGS"):
             res["Makefile"] = flag
@@ -31,9 +30,16 @@ def guess_opt_level(path):
         elif flag := ogrep(raw, "CXXFLAGS"):
             res["Makefile"] = flag
             return res
+        elif ogrep(raw, "CC"): 
+            res["Makefile"] = "-O0" # default
+            return res
+        elif ogrep(raw, "CXX"):
+            res["Makefile"] = "-O0" # default
+            return res
+        print()
 
-    elif "config.status" in path[2]:
-        print("[+] config.status in root directory")
+    if "config.status" in path[2]:
+        print("[+] config.status: ", end="")
         raw = open(prefix+"/config.status", "r").readlines()
         if flag := ogrep(raw, "S[\"CFLAGS\"]"):
             res["config.status"] = flag
@@ -41,9 +47,10 @@ def guess_opt_level(path):
         elif flag := ogrep(raw, "S[\"CXXFLAGS\"]"):
             res["config.status"] = flag
             return res
+        print()
 
-    elif "configure" in path[2]:
-        print("[+] configure in root directory")
+    if "configure" in path[2]:
+        print("[+] configure: ", end="")
         raw = open(prefix+"/configure", "r").readlines()
         if flag := ogrep(raw, "CFLAGS"):
             res["configure"] = flag
@@ -54,9 +61,10 @@ def guess_opt_level(path):
         else:
             res["configure"] = "-O2" # default
             return res
+        print()
 
-    elif "Configure" in path[2]:
-        print("[+] configure in root directory")
+    if "Configure" in path[2]:
+        print("[+] configure: ", end="")
         raw = open(prefix+"/Configure", "r").readlines()
         if flag := ogrep(raw, "CFLAGS"):
             res["configure"] = flag
@@ -67,9 +75,10 @@ def guess_opt_level(path):
         else:
             res["configure"] = "-O2" # default
             return res
-    
-    elif "Makefile.am" in path[2]:
-        print("[+] Makefile.am in root directory")
+        print()
+
+    if "Makefile.am" in path[2]:
+        print("[+] Makefile.am: ", end="")
         raw = open(prefix+"/Makefile.am", "r").readlines()
         if flag := ogrep(raw, "CFLAGS"):
             res["Makefile.am"] = flag
@@ -77,10 +86,10 @@ def guess_opt_level(path):
         elif flag := ogrep(raw, "CXXFLAGS"):
             res["Makefile.am"] = flag
             return res
-        
+        print()
     
-    elif "configure.ac" in path[2]:
-        print("[+] configure.ac in root directory")
+    if "configure.ac" in path[2]:
+        print("[+] configure.ac: ", end="")
         raw = open(prefix+"/configure.ac", "r").readlines()
         if flag := ogrep(raw, "AC_PROG_CC"):
             res["configure.ac"] = flag
@@ -91,9 +100,24 @@ def guess_opt_level(path):
         else:
             res["configure"] = "-O2" # default
             return res
-    
-    if res is None:
-        res["default"] = "-O0"
+        print()
+
+    if "CMakeLists.txt" in path[2]:
+        print ("[*] CMakeLists.txt: ", end="")
+        raw = open(prefix+"/CMakeLists.txt").readlines()
+        if flag := ogrep(raw, "CMAKE_C_FLAGS"):
+            res["CMakeLists.txt"] = flag
+            return res
+        elif flag := ogrep(raw, "CMAKE_CXX_FLAGS"):
+            res["CMakeLists.txt"] = flag
+            return res
+        else:
+            res["CMakeLists.txt"] = "-O0"
+            return res
+        print()
+
+    if res == {}:
+        res["NA"] = "X"
 
     return res
 
@@ -102,6 +126,7 @@ def guess_opt_level(path):
 # Return optimization level of main target package
 def check_opt_level():
     lst = list(os.walk("./"))
+    print("[ ] Checking root directory...")
     root = lst[1]
 
     ''' 
@@ -109,5 +134,13 @@ def check_opt_level():
     * Makefile -> config.status -> Configure -> Makefile.am -> Configure.ac
     '''
     res = guess_opt_level(root)
-    return res
+    if ("NA" in res) and ("src" in root[1]):
+        print("[ ] Checking src directory...")
+        for directory in lst:
+            print(directory)
+            if directory[0].endswith("src"):
+                res = guess_opt_level(directory)
+                return res
+    else:
+        return res
 

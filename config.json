@@ -4,6 +4,6 @@
         "field": "inst"
     },
     "parser": {
-        "top": 100
+        "top": 200000
     }
 }
