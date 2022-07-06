@@ -137,14 +137,25 @@ def check_opt_level():
     Check from
     * Makefile -> config.status -> Configure -> Makefile.am -> Configure.ac
     '''
-    res = guess_opt_level(root)
+    try:
+        res = guess_opt_level(root)
+    except:
+        res = {}
+        res["Error"] = "X"
+        return res
+
     if ("NA" in res) and ("src" in root[1]):
         print("[ ] Checking src directory...")
         for directory in lst:
             print(directory)
             if directory[0].endswith("src"):
-                res = guess_opt_level(directory)
-                return res
+                try:
+                    res = guess_opt_level(directory)
+                    return res
+                except:
+                    res = {}
+                    res["Error"] = "X"
+                    return res
     else:
         return res
 
